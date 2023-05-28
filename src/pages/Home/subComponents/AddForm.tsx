@@ -22,7 +22,7 @@ const validationSchema = Yup.object().shape({
     }))
 })
 
-const AddForm: React.FC<{ toggleModal: () => void, getArrayField: () => void }> = ({ toggleModal, getArrayField }) => {
+const AddForm: React.FC<{ toggleModal: () => void, getNotes: () => void }> = ({ toggleModal, getNotes }) => {
     const user = useUserStore((state) => state.user)
 
     const formik = useFormik<FormikValues>({
@@ -42,9 +42,9 @@ const AddForm: React.FC<{ toggleModal: () => void, getArrayField: () => void }> 
                 }, { merge: true })
                 toast.success(<ToastSucccessText>Added Note Successfully</ToastSucccessText>, { position: "top-right" })
                 formikProps.resetForm()
-                getArrayField()
+                getNotes()
             } catch (error) {
-                toast.error(`Error saving object`);
+                toast.error(`Error saving note`);
             }
         },
         validationSchema

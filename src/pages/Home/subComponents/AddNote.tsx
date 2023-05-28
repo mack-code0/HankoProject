@@ -5,13 +5,13 @@ import SideModal from "../../../components/SideModal"
 interface Props {
     open: boolean
     toggle: () => void
-    getArrayField: () => void
+    getNotes: () => void
 }
-const AddNote: React.FC<Props> = ({ open, toggle, getArrayField }) => {
+const AddNote: React.FC<Props> = ({ open, toggle, getNotes }) => {
 
     return <>
         <SideModal open={open} header="Add Note" toggle={toggle}>
-            <AddForm getArrayField={getArrayField} toggleModal={toggle} />
+            <AddForm getNotes={getNotes} toggleModal={toggle} />
         </SideModal>
     </>
 }
