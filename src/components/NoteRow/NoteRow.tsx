@@ -11,20 +11,25 @@ import SideModal from "../SideModal"
 import UpdateRow from "./subComponents/UpdateRow"
 import { Dropdown, Menu } from "antd"
 import { IoIosUndo } from "react-icons/io"
+import { HeartFilled } from '@ant-design/icons';
+import { Rate } from 'antd';
 
 interface Props {
     note: {
         title: string
         note: string
         id: string
+        favorite: boolean
     }
     afterDelete?: () => void
     afterUpdate?: (val: any) => void
+    afterFavoriteUpdate?: () => void
     fromDeletePage?: boolean
 }
 
-const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePage }) => {
+const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePage, afterFavoriteUpdate }) => {
     const user = useUserStore((state) => state.user)
+    const [noteState, setNoteState] = useState(note)
 
     const [viewNote, setViewNote] = useState(false)
     const toggleViewNote = () => setViewNote(!viewNote)
@@ -56,7 +61,7 @@ const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePa
                 await setDoc(userRef, {
                     arrayField: arrayUnion(...[data])
                 }, { merge: true })
-                
+
                 if (afterDelete) afterDelete()
                 toast.success(<ToastText>Note Successfully Restored</ToastText>)
             } else {
@@ -77,17 +82,17 @@ const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePa
             await deleteTemporarily(note)
         }
 
-        const noteRef = doc(db, 'notes', user.email);
+        const docRef = doc(db, 'notes', user.email);
 
         try {
-            const documentSnapshot = await getDoc(noteRef);
+            const documentSnapshot = await getDoc(docRef);
             if (documentSnapshot.exists()) {
                 const documentData = documentSnapshot.data();
                 const arrayField = documentData.arrayField || [];
 
                 const updatedArray = arrayField.filter((item: any) => item.id !== note.id);
 
-                await updateDoc(noteRef, {
+                await updateDoc(docRef, {
                     arrayField: updatedArray
                 });
                 toast.success(<ToastText>Item deleted successfully!</ToastText>);
@@ -105,7 +110,7 @@ const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePa
     const deleteTemporarily = async (item: any) => {
         const collectionRef = collection(db, "deletedNotes")
         const userRef = doc(collectionRef, user.email)
-        const data = { ...item }
+        const data = { ...item, favorite: false }
         return await setDoc(userRef, {
             arrayField: arrayUnion(...[data])
         }, { merge: true })
@@ -137,6 +142,39 @@ const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePa
         }
     };
 
+    const updateFavorite = async () => {
+        setNoteState(prev => ({ ...prev, favorite: !note.favorite }))
+        const docRef = doc(db, "notes", user.email)
+        try {
+            const documentSnapshot = await getDoc(docRef);
+            if (documentSnapshot.exists()) {
+                const documentData = documentSnapshot.data();
+                const arrayField = documentData.arrayField || [];
+
+                const updatedArray = arrayField.map((item: any) => {
+                    if (item.id === note.id) {
+                        return {
+                            ...note,
+                            favorite: !note.favorite
+                        };
+                    }
+                    return item;
+                });
+
+                await updateDoc(docRef, {
+                    arrayField: updatedArray
+                });
+                if (afterFavoriteUpdate) {
+                    afterFavoriteUpdate()
+                }
+            } else {
+                toast.error(<ToastText>Document does not exist!</ToastText>, { position: "top-right" });
+            }
+        } catch (error) {
+            setNoteState(prev => ({ ...prev, favorite: !note.favorite }))
+            toast.error(<ToastText>Error updating item</ToastText>, { position: "top-right" });
+        }
+    }
 
 
     return <div className="flex flex-row items-start">
@@ -163,7 +201,18 @@ const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePa
 
         <div className="w-3 h-3 rounded-full bg-green100 mt-2" />
         <div className="w-full ml-7 border-b border-b-textGrey100 border-opacity-20 pb-7">
-            <h4 className="text-white font-inter font-bold text-2xl">{note.title}</h4>
+            <div className="flex flex-row items-start">
+                {!fromDeletePage
+                    && <Rate
+                        tooltips={["Add to favorite"]}
+                        value={noteState.favorite ? 1 : 0}
+                        className="mt-[-0.2rem] mr-3 text-rose-600"
+                        count={1}
+                        character={<HeartFilled />}
+                        onChange={() => updateFavorite()}
+                    />}
+                <h4 className="text-white font-inter font-bold text-2xl">{note.title}</h4>
+            </div>
             <p className="mt-3 font-figtree text-textGrey100 text-[1rem]">
                 {note.note}
             </p>

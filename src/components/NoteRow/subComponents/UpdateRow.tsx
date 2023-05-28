@@ -11,6 +11,7 @@ interface FormikValues {
     title: string
     note: string
     id: string
+    favorite: boolean
 }
 
 const validationSchema = Yup.object().shape({
@@ -30,7 +31,7 @@ const UpdateRow: React.FC<{
 
     const formik = useFormik<FormikValues>({
         validationSchema,
-        initialValues: { title: note.title, note: note.note, id: note.id },
+        initialValues: { ...note, title: note.title, note: note.note },
         validateOnBlur: false,
         onSubmit: async (val) => {
             const docRef = doc(db, "notes", user.email)
