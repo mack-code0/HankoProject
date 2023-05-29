@@ -40,7 +40,7 @@ export default function Home() {
                 const arrayField = documentData.arrayField || [];
                 setHomeState(prev => ({ ...prev, data: arrayField }))
             } else {
-                toast(<ToastText>Document does not exist!</ToastText>);
+                toast(<ToastText>Welcome to your Notes!. Please add a new note to get started.</ToastText>, { duration: 10000 });
             }
         } catch (error) {
             toast.error(<ToastText>Error getting array field</ToastText>);

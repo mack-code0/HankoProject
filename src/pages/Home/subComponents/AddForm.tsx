@@ -35,6 +35,7 @@ const AddForm: React.FC<{ toggleModal: () => void, getNotes: () => void }> = ({ 
                 const data = {
                     title: val.noteCreationRequests[0].title,
                     note: val.noteCreationRequests[0].note,
+                    favorite: false,
                     id: uuidv4()
                 }
                 await setDoc(userRef, {

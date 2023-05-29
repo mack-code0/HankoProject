@@ -55,4 +55,17 @@ const Styles = styled.div`
     z-index: 1;
     transition: all 0.2s;
     box-shadow: none;
+
+    @media only screen and (max-width: 992px) {
+        box-shadow: 42px -84px 83px 20px rgba(0, 0, 0, 0.226);
+        .control{
+            display: flex;
+            align-items: center;
+        }
+        &.close-sidebar{
+            box-shadow: none;
+            margin-left: -${SIZES.sidebarWidth}px;
+            width: 0;
+        }
+    }
 `

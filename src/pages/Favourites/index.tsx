@@ -35,8 +35,6 @@ export default function Home() {
                 const arrayField = documentData.arrayField || [];
                 const favoriteObjects = arrayField.filter((obj: any) => obj.favorite === true);
                 setState(prev => ({ ...prev, data: favoriteObjects }))
-            } else {
-                toast(<ToastText>Document does not exist!</ToastText>);
             }
         } catch (error) {
             toast.error(<ToastText>Error getting array field</ToastText>);

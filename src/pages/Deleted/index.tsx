@@ -34,8 +34,6 @@ export default function Deleted() {
                 const documentData = documentSnapshot.data();
                 const arrayField = documentData.arrayField || [];
                 setHomeState(prev => ({ ...prev, data: arrayField }))
-            } else {
-                toast(<ToastText>Document does not exist!</ToastText>);
             }
         } catch (error) {
             toast.error(<ToastText>An Error Occured</ToastText>);
