@@ -25,9 +25,10 @@ interface Props {
     afterUpdate?: (val: any) => void
     afterFavoriteUpdate?: () => void
     fromDeletePage?: boolean
+    containerClassName?: string
 }
 
-const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePage, afterFavoriteUpdate }) => {
+const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePage, afterFavoriteUpdate, containerClassName }) => {
     const user = useUserStore((state) => state.user)
     const [noteState, setNoteState] = useState(note)
 
@@ -177,7 +178,7 @@ const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePa
     }
 
 
-    return <div className="flex flex-row items-start">
+    return <div className={`${containerClassName} flex flex-row items-start`}>
         <SideModal open={viewNote} header="View" toggle={toggleViewNote}>
             <div className="mt-20">
                 <p className="text-white font-semibold font-figtree text-base">📌 Title</p>

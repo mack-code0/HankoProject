@@ -6,28 +6,8 @@
 
 @layer utilities {
 
-  * {
-    scrollbar-width: thin;
-    scrollbar-color: #D5E5FA;
-  }
-
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-
-  ::-webkit-scrollbar-track {
-    border-radius: 100vh;
-    background: #d9d9d9;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: #D5E5FA;
-    border-radius: 100vh;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: #D5E5FA;
+    display: none;
   }
 }
 

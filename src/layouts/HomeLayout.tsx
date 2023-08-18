@@ -5,7 +5,7 @@ import Sidebar from "../components/Sidebar/Sidebar"
 
 export default function HomeLayout({ children }: any) {
     return <AuthProvider>
-        <Styles className="d-flex">
+        <Styles className="d-flex overflow-x-hidden">
             <Sidebar />
             <div className="homeLayout bg-black200">
                 {children}

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { auth } from "../utils/Firebase";
 import { handleLogout } from "./HandleLogout";
 import { useUserStore } from "./Store";
+import loading from "./../assets/images/loading.gif"
 
 
 export default function AuthProvider({ children }: any) {
@@ -39,7 +40,7 @@ export default function AuthProvider({ children }: any) {
 
     if (isTokenValidating) {
         return <div className="flex items-center justify-center w-screen h-screen text-slate-400 bg-black100">
-
+            <img src={loading} width={80} alt="" />
         </div>
     }
 

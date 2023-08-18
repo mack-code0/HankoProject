@@ -7,12 +7,16 @@ import { Avatar } from "antd"
 import { useUserStore } from "../../utils/Store"
 import { handleLogout } from "../../utils/HandleLogout"
 import SIZES from "../../assets/SIZES"
+import { useState } from "react"
+import { DoubleRightOutlined, DoubleLeftOutlined } from "@ant-design/icons"
+
 
 export default function Sidebar() {
     const activeTab = window.location.pathname
     const user = useUserStore((state) => state.user)
+    const [sidebarOpen, setSidebarOpen] = useState(false)
 
-    return <Styles className="bg-black100 ml-0 p-6">
+    return <Styles className={`${!sidebarOpen && "close-sidebar"} bg-black100 ml-0 p-6`}>
         <div className="flex flex-row items-center justify-end">
             <Avatar size={40} src={user?.photoURL} className="mr-auto" />
             <BiHome className="text-textGrey100 cursor-pointer text-2xl mr-3" />
@@ -42,6 +46,13 @@ export default function Sidebar() {
                 <CgLogOut className="mr-4 text-xl" />Logout
             </button>
         </div>
+        <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="control bg-black100">
+            {sidebarOpen
+                ? <DoubleLeftOutlined />
+                : <DoubleRightOutlined />}
+        </button>
     </Styles>
 }
 
@@ -55,6 +66,26 @@ const Styles = styled.div`
     z-index: 1;
     transition: all 0.2s;
     box-shadow: none;
+
+    .control{
+        all: unset;
+        cursor: pointer;
+        padding: 17.4233px 17.4809px;
+        background: #111111;
+        border-top-right-radius: 13.5963px;
+        border-bottom-right-radius: 13.5963px;
+        color: #fff;
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 14.5386px;
+        display: none;
+        margin-left: ${SIZES.sidebarWidth}px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        transition: all 0.2s;
+    }
 
     @media only screen and (max-width: 992px) {
         box-shadow: 42px -84px 83px 20px rgba(0, 0, 0, 0.226);

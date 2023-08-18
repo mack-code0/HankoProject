@@ -16,6 +16,7 @@ export default function Home() {
     const user = useUserStore((state) => state.user)
     const [homeState, setHomeState] = useState({
         data: [] as any,
+        initialData: [],
         isLoading: true
     })
 
@@ -38,7 +39,7 @@ export default function Home() {
             if (documentSnapshot.exists()) {
                 const documentData = documentSnapshot.data();
                 const arrayField = documentData.arrayField || [];
-                setHomeState(prev => ({ ...prev, data: arrayField }))
+                setHomeState(prev => ({ ...prev, data: arrayField, tempData: arrayField }))
             } else {
                 toast(<ToastText>Welcome to your Notes!. Please add a new note to get started.</ToastText>, { duration: 10000 });
             }
@@ -53,8 +54,25 @@ export default function Home() {
         getNotes()
     }, [])
 
+    const [inputText, setInputText] = useState("")
+    const handleSearchText = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const searchText = e.target.value;
+        setInputText(searchText);
+
+        if (searchText === '') {
+            setHomeState((prev) => ({ ...prev, data: prev.initialData }));
+        } else {
+            const filteredData = homeState.initialData.filter(obj => {
+                const { note, title } = obj;
+                const pattern = new RegExp(searchText, 'i'); // 'i' flag for case-insensitive search
+                return pattern.test(note) || pattern.test(title);
+            });
+            setHomeState((prev) => ({ ...prev, data: filteredData }))
+        }
+    }
+
     return <Container className="p-8 h-screen">
-        <CustomInput size="large" placeholder="Search notes" prefix={<CgSearch className="mr-3 text-2xl text-white" />} />
+        <CustomInput onChange={handleSearchText} value={inputText} size="large" placeholder="Search notes" prefix={<CgSearch className="mr-3 text-2xl text-white" />} />
 
         <TbSquareRoundedPlusFilled onClick={toggleAddNote} className="text-6xl cursor-pointer transition-all hover:text-opacity-70 text-white fixed bottom-10 right-10" />
         <AddNote getNotes={getNotes} open={addNote} toggle={toggleAddNote} />
@@ -73,6 +91,7 @@ export default function Home() {
                             afterDelete={() => afterDelete(note.id)}
                             key={idx}
                             note={note}
+                            containerClassName={note.hidden ? "hidden" : ""}
                             afterUpdate={(updatedValue: any) => setHomeState(prev => {
                                 let tempArr: any = [...prev.data]
                                 const idx = tempArr.findIndex((val: any) => updatedValue.id === val.id)
