@@ -2,23 +2,22 @@ import { GoogleAuthProvider } from "firebase/auth";
 import { signInWithPopup } from "firebase/auth";
 import { auth } from "../../utils/Firebase";
 import { useNavigate } from "react-router";
-import { FaLock } from "react-icons/fa"
 
 const provider = new GoogleAuthProvider();
 function Login() {
     const navigate = useNavigate()
     const signInFunction = () => {
         signInWithPopup(auth, provider)
-            .then(async (result) => {
-                const credential = GoogleAuthProvider.credentialFromResult(result);
-                const token = credential?.accessToken;
-                const user = result.user;
+            .then(async () => {
+                // const credential = GoogleAuthProvider.credentialFromResult(result);
+                // const token = credential?.accessToken;
+                // const user = result.user;
                 navigate("/home")
-            }).catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                const email = error.customData.email;
-                const credential = GoogleAuthProvider.credentialFromError(error);
+            }).catch(() => {
+                // const errorCode = error.code;
+                // const errorMessage = error.message;
+                // const email = error.customData.email;
+                // const credential = GoogleAuthProvider.credentialFromError(error);
             });
     }
     return (<div className="flex items-center justify-center w-screen h-screen bg-black100">

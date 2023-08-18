@@ -18,7 +18,7 @@ export default function AuthProvider({ children }: any) {
                     setTokenValidating(true);
                 }
                 userVal.getIdTokenResult()
-                    .then((idTokenResult: any) => {
+                    .then(() => {
                         // Token validation complete
                         setTokenValidating(false);
 
