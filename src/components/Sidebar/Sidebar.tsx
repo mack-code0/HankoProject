@@ -19,7 +19,7 @@ export default function Sidebar() {
     return <Styles className={`${!sidebarOpen && "close-sidebar"} bg-black100 ml-0 p-6`}>
         <div className="flex flex-row items-center justify-end">
             <Avatar size={40} src={user?.photoURL} className="mr-auto" />
-            <BiHome className="text-textGrey100 cursor-pointer text-2xl mr-3" />
+            <Link to={"/home"}><BiHome className="text-textGrey100 cursor-pointer text-2xl mr-3" /></Link>
             <FaEllipsisV className="text-textGrey100 cursor-pointer text-xl" />
         </div>
 

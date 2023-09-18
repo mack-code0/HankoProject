@@ -11,7 +11,7 @@ import SideModal from "../SideModal"
 import UpdateRow from "./subComponents/UpdateRow"
 import { Dropdown, Menu } from "antd"
 import { IoIosUndo } from "react-icons/io"
-import { HeartFilled } from '@ant-design/icons';
+import { HeartFilled, HeartOutlined, HeartTwoTone } from '@ant-design/icons';
 import { Rate } from 'antd';
 
 interface Props {
@@ -143,8 +143,8 @@ const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePa
         }
     };
 
-    const updateFavorite = async () => {
-        setNoteState(prev => ({ ...prev, favorite: !note.favorite }))
+    const updateFavorite = async (bool: boolean) => {
+        setNoteState(prev => ({ ...prev, favorite: bool }))
         const docRef = doc(db, "notes", user.email)
         try {
             const documentSnapshot = await getDoc(docRef);
@@ -205,12 +205,12 @@ const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePa
             <div className="flex flex-row items-start">
                 {!fromDeletePage
                     && <Rate
-                        tooltips={["Add to favorite"]}
+                        tooltips={[noteState.favorite ? "Remove from favorite" : "Add to favorite"]}
                         value={noteState.favorite ? 1 : 0}
                         className="mt-[-0.2rem] mr-3 text-rose-600"
                         count={1}
-                        character={<HeartFilled />}
-                        onChange={() => updateFavorite()}
+                        character={noteState.favorite ? <HeartFilled /> : <HeartOutlined className="!text-white" />}
+                        onChange={() => updateFavorite(!noteState.favorite)}
                     />}
                 <h4 className="text-white font-inter font-bold text-2xl">{note.title}</h4>
             </div>
