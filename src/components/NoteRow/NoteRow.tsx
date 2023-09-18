@@ -11,7 +11,7 @@ import SideModal from "../SideModal"
 import UpdateRow from "./subComponents/UpdateRow"
 import { Dropdown, Menu } from "antd"
 import { IoIosUndo } from "react-icons/io"
-import { HeartFilled, HeartOutlined, HeartTwoTone } from '@ant-design/icons';
+import { HeartFilled, HeartOutlined } from '@ant-design/icons';
 import { Rate } from 'antd';
 
 interface Props {
