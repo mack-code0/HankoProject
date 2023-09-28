@@ -96,7 +96,7 @@ const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePa
                 await updateDoc(docRef, {
                     arrayField: updatedArray
                 });
-                toast.success(<ToastText>Item deleted successfully!</ToastText>);
+                toast.success(<ToastText>Note deleted successfully!</ToastText>);
                 if (afterDelete) afterDelete()
             } else {
                 toast(<ToastText>Document does not exist!</ToastText>);
@@ -261,7 +261,7 @@ const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePa
                             <button
                                 disabled={isDeleting}
                                 // onClick={() => deleteNoteFromNotes(note.id)}
-                                className="flex flex-row items-center hover:text-white text-white text-opacity-80 font-figtree text-base">
+                                className="transition-all duration-75 flex flex-row items-center hover:text-red-400 focus:text-red-400 text-white text-opacity-80 font-figtree text-base">
                                 <CgTrash className="mr-2 text-xl" /> | Delete {isDeleting && <Spinner />}
                             </button>
                         </Dropdown>
