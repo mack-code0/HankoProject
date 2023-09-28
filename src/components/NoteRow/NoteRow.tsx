@@ -13,6 +13,7 @@ import { Dropdown, Menu } from "antd"
 import { IoIosUndo } from "react-icons/io"
 import { HeartFilled, HeartOutlined } from '@ant-design/icons';
 import { Rate } from 'antd';
+import { useNavigate } from "react-router-dom"
 
 interface Props {
     note: {
@@ -29,6 +30,7 @@ interface Props {
 }
 
 const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePage, afterFavoriteUpdate, containerClassName }) => {
+    const navigate = useNavigate()
     const user = useUserStore((state) => state.user)
     const [noteState, setNoteState] = useState(note)
 
@@ -170,7 +172,7 @@ const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePa
                     afterFavoriteUpdate()
                 }
 
-                if (bool) return toast.success(<small>Note added to favorites</small>)
+                if (bool) return toast.success(<small>Note added to favorites. <a className="underline cursor-pointer" onClick={() => navigate("/favourites")}>View All</a></small>)
                 toast.error(<small>Note removed favorites</small>)
             } else {
                 toast.error(<ToastText>Document does not exist!</ToastText>, { position: "top-right" });
