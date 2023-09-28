@@ -12,7 +12,14 @@ export default {
       },
       fontFamily: {
         inter: ["inter"],
-        figtree: ["figtree"]
+        figtree: ["figtree"],
+        roboto: ["roboto"],
+      },
+      boxShadow: {
+        'googleBtn': '0 0 6px #4285f4',
+      },
+      backgroundImage:{
+        'shatteredIsland': "url('./assets/images/shattered-island.gif')"
       }
     },
   },

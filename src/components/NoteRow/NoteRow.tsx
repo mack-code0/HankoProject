@@ -144,6 +144,7 @@ const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePa
     };
 
     const updateFavorite = async (bool: boolean) => {
+        console.log(bool)
         setNoteState(prev => ({ ...prev, favorite: bool }))
         const docRef = doc(db, "notes", user.email)
         try {
@@ -168,6 +169,9 @@ const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePa
                 if (afterFavoriteUpdate) {
                     afterFavoriteUpdate()
                 }
+
+                if (bool) return toast.success(<small>Note added to favorites</small>)
+                toast.error(<small>Note removed favorites</small>)
             } else {
                 toast.error(<ToastText>Document does not exist!</ToastText>, { position: "top-right" });
             }
@@ -251,8 +255,8 @@ const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePa
                         <Dropdown
                             trigger={["click"]}
                             overlay={<Menu className="bg-[#393939] bg-opacity-80 rounded-xl overflow-hidden py-0">
-                                <Menu.Item onClick={() => deleteNoteFromNotes(true)} className="text-white font-inter hover:bg-[#242424] py-2" key={1}>Delete</Menu.Item>
-                                <Menu.Item onClick={() => deleteNoteFromNotes(false)} className="text-white bg-red-700 bg-opacity-90 font-inter hover:bg-[#242424] py-2" key={2}>Delete Permanently</Menu.Item>
+                                <Menu.Item onClick={() => deleteNoteFromNotes(true)} className="font-inter hover:bg-[#242424] py-2" key={1}>Delete</Menu.Item>
+                                <Menu.Item onClick={() => deleteNoteFromNotes(false)} className="!text-white !bg-red-700 font-inter py-2" key={2}>Delete Permanently</Menu.Item>
                             </Menu>}>
                             <button
                                 disabled={isDeleting}

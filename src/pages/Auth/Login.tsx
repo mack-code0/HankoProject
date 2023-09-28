@@ -20,12 +20,14 @@ function Login() {
                 // const credential = GoogleAuthProvider.credentialFromError(error);
             });
     }
-    return (<div className="flex items-center justify-center w-screen h-screen bg-black100">
+    return (<div className="flex items-center justify-center w-screen h-screen bg-black100 bg-shatteredIsland">
         <button
             onClick={signInFunction}
-            className="px-4 py-2 border flex items-center gap-2 bg-white rounded-lg">
-            <img className="w-6 h-6" src="https://www.svgrepo.com/show/475656/google-color.svg" loading="lazy" alt="google logo" />
-            <span className="font-figtree text-black text-opacity-70 font-semibold mx-10">Login with Google</span>
+            className="h-[42px] w-[184px] min-w-fit flex items-center bg-[#4285f4] active:bg-[#1669F2] hover:shadow hover:shadow-googleBtn rounded-sm">
+            <div className="border border-[#4285f4]  bg-white h-full flex items-center justify-center px-3">
+                <img className="w-6 h-6" src="https://www.svgrepo.com/show/475656/google-color.svg" loading="lazy" alt="google logo" />
+            </div>
+            <span className="font-roboto text-white mx-10 whitespace-nowrap">Login with Google</span>
         </button>
     </div>);
 }
