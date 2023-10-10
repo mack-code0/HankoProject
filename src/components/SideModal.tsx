@@ -1,4 +1,5 @@
 import { Drawer } from "antd"
+import { useEffect, useState } from "react"
 import { RiCloseCircleFill } from "react-icons/ri"
 
 const SideModal: React.FC<{
@@ -9,9 +10,21 @@ const SideModal: React.FC<{
     header?: string
 }>
     = ({ open, width, toggle, children, header }) => {
+        const [screenWidth, setScreenWidth] = useState(window.innerWidth)
+
+        const handleScreenResize = () => {
+            setScreenWidth(window.innerWidth);
+        }
+
+        useEffect(() => {
+            window.addEventListener("resize", handleScreenResize)
+            return () => window.removeEventListener("resize", handleScreenResize)
+        }, [])
+
+
         return <Drawer
             title={null}
-            width={width || "40%"}
+            width={screenWidth < 850 ? "100%" : (width || "40%")}
             placement={"right"}
             closable={false}
             onClose={toggle}
