@@ -1,34 +1,65 @@
-import { GoogleAuthProvider } from "firebase/auth";
-import { signInWithPopup } from "firebase/auth";
-import { auth } from "../../utils/Firebase";
+import { useMemo, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { register, Hanko } from "@teamhanko/hanko-elements";
+import { HANKO_API_URL } from "../../utils/keys";
+import supabaseClient from "../../utils/supabaseClient";
+import { User } from "../../utils/types";
+import toast from "react-hot-toast";
+import ToastText from "../../components/ToastText";
 
-const provider = new GoogleAuthProvider();
+
 function Login() {
     const navigate = useNavigate()
-    const signInFunction = () => {
-        signInWithPopup(auth, provider)
-            .then(async () => {
-                // const credential = GoogleAuthProvider.credentialFromResult(result);
-                // const token = credential?.accessToken;
-                // const user = result.user;
-                navigate("/home")
-            }).catch(() => {
-                // const errorCode = error.code;
-                // const errorMessage = error.message;
-                // const email = error.customData.email;
-                // const credential = GoogleAuthProvider.credentialFromError(error);
-            });
+    const hanko = useMemo(() => new Hanko(HANKO_API_URL), [])
+
+    const saveUserIfUserIsNew = async (email: string, hankoId: string) => {
+        try {
+            const { data: users, error } = await supabaseClient
+                .from('users')
+                .select('id')
+                .eq('email', email)
+
+            if (error) {
+                throw error
+            }
+
+            const user = users as User[]
+
+            if (user.length === 0) {
+                const savedUserResponse = await supabaseClient
+                    .from('users')
+                    .insert([{ email, hankoId }])
+                    .select()
+
+                if (savedUserResponse.error) {
+                    throw error
+                }
+            }
+        } catch (error: any) {
+            toast.error(<ToastText>An error occured</ToastText>);
+        }
     }
-    return (<div className="flex items-center justify-center w-screen h-screen bg-black100 bg-shatteredIsland">
-        <button
-            onClick={signInFunction}
-            className="h-[42px] w-[184px] min-w-fit flex items-center bg-[#4285f4] active:bg-[#1669F2] hover:shadow hover:shadow-googleBtn rounded-sm">
-            <div className="border border-[#4285f4]  bg-white h-full flex items-center justify-center px-3">
-                <img className="w-6 h-6" src="https://www.svgrepo.com/show/475656/google-color.svg" loading="lazy" alt="google logo" />
-            </div>
-            <span className="font-roboto text-white mx-10 whitespace-nowrap">Login with Google</span>
-        </button>
+
+    const redirectAfterLogin = async () => {
+        const user = await hanko.user.getCurrent()
+        await saveUserIfUserIsNew(user.email, user.id)
+        navigate("/home")
+    }
+
+    useEffect(() => {
+        hanko.onAuthFlowCompleted(() => {
+            redirectAfterLogin()
+        })
+    }, [])
+
+    useEffect(() => {
+        register(HANKO_API_URL).catch(() => {
+            toast.error(<ToastText>An Error occured</ToastText>)
+        })
+    }, [])
+
+    return (<div className="flex h-screen items-center justify-center">
+        <hanko-auth />
     </div>);
 }
 

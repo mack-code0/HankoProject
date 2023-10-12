@@ -1,17 +1,17 @@
 import styled from "styled-components"
 import SIZES from "../assets/SIZES"
-import AuthProvider from "../utils/AuthProvider"
 import Sidebar from "../components/Sidebar/Sidebar"
+import AuthGuard from "../routes/AuthGuard"
 
 export default function HomeLayout({ children }: any) {
-    return <AuthProvider>
+    return <AuthGuard>
         <Styles className="d-flex overflow-x-hidden">
             <Sidebar />
             <div className="homeLayout bg-black200">
                 {children}
             </div>
         </Styles>
-    </AuthProvider>
+    </AuthGuard>
 }
 
 const Styles = styled.div`

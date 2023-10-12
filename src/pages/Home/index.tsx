@@ -6,8 +6,6 @@ import NoteRow from "../../components/NoteRow/NoteRow"
 import AddNote from "./subComponents/AddNote"
 import { useState, useEffect } from "react"
 import { useUserStore } from "../../utils/Store"
-import { doc, getDoc } from "firebase/firestore"
-import { db } from "../../utils/Firebase"
 import NoNote from "../../components/NoNote"
 import toast from "react-hot-toast"
 import ToastText from "../../components/ToastText"
@@ -32,17 +30,17 @@ export default function Home() {
 
     const getNotes = async () => {
         setHomeState((prev) => ({ ...prev, isLoading: true }))
-        const docRef = doc(db, 'notes', user.email);
+        // const docRef = doc(db, 'notes', user.email);
 
         try {
-            const documentSnapshot = await getDoc(docRef);
-            if (documentSnapshot.exists()) {
-                const documentData = documentSnapshot.data();
-                const arrayField = documentData.arrayField || [];
-                setHomeState(prev => ({ ...prev, data: arrayField, tempData: arrayField }))
-            } else {
-                toast(<ToastText>Welcome to your Notes!. Please add a new note to get started.</ToastText>, { duration: 10000 });
-            }
+            // const documentSnapshot = await getDoc(docRef);
+            // if (documentSnapshot.exists()) {
+            //     const documentData = documentSnapshot.data();
+            //     const arrayField = documentData.arrayField || [];
+            //     setHomeState(prev => ({ ...prev, data: arrayField, tempData: arrayField }))
+            // } else {
+            //     toast(<ToastText>Welcome to your Notes!. Please add a new note to get started.</ToastText>, { duration: 10000 });
+            // }
         } catch (error) {
             toast.error(<ToastText>Error getting array field</ToastText>);
         } finally {

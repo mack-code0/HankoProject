@@ -1,7 +1,5 @@
-import { arrayUnion, collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore"
 import { CgEreader, CgTrash } from "react-icons/cg"
 import { FaRegEdit } from "react-icons/fa"
-import { db } from "../../utils/Firebase"
 import { useUserStore } from "../../utils/Store"
 import toast from "react-hot-toast"
 import ToastText from "../ToastText"
@@ -45,31 +43,31 @@ const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePa
         setIsRestoringNote(true)
         try {
             // Delete the notes from the deletedNotes collection
-            const noteRef = doc(db, 'deletedNotes', user.email);
-            const documentSnapshot = await getDoc(noteRef);
-            if (documentSnapshot.exists()) {
-                const documentData = documentSnapshot.data();
-                const arrayField = documentData.arrayField || [];
+            // const noteRef = doc(db, 'deletedNotes', user.email);
+            // const documentSnapshot = await getDoc(noteRef);
+            // if (documentSnapshot.exists()) {
+            //     const documentData = documentSnapshot.data();
+            //     const arrayField = documentData.arrayField || [];
 
-                const updatedArray = arrayField.filter((item: any) => item.id !== note.id);
+            //     const updatedArray = arrayField.filter((item: any) => item.id !== note.id);
 
-                await updateDoc(noteRef, {
-                    arrayField: updatedArray
-                });
+            //     await updateDoc(noteRef, {
+            //         arrayField: updatedArray
+            //     });
 
-                // Move the notes to the main notes collection
-                const collectionRef = collection(db, "notes")
-                const userRef = doc(collectionRef, user.email)
-                const data = { ...note }
-                await setDoc(userRef, {
-                    arrayField: arrayUnion(...[data])
-                }, { merge: true })
+            //     // Move the notes to the main notes collection
+            //     const collectionRef = collection(db, "notes")
+            //     const userRef = doc(collectionRef, user.email)
+            //     const data = { ...note }
+            //     await setDoc(userRef, {
+            //         arrayField: arrayUnion(...[data])
+            //     }, { merge: true })
 
-                if (afterDelete) afterDelete()
-                toast.success(<ToastText>Note Successfully Restored</ToastText>)
-            } else {
-                return toast.error(<ToastText>Document does not exist!</ToastText>);
-            }
+            //     if (afterDelete) afterDelete()
+            //     toast.success(<ToastText>Note Successfully Restored</ToastText>)
+            // } else {
+            //     return toast.error(<ToastText>Document does not exist!</ToastText>);
+            // }
         } catch (error) {
             toast.error(`Error restoring note`);
         } finally {
@@ -85,24 +83,24 @@ const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePa
             await deleteTemporarily(note)
         }
 
-        const docRef = doc(db, 'notes', user.email);
+        // const docRef = doc(db, 'notes', user.email);
 
         try {
-            const documentSnapshot = await getDoc(docRef);
-            if (documentSnapshot.exists()) {
-                const documentData = documentSnapshot.data();
-                const arrayField = documentData.arrayField || [];
+            // const documentSnapshot = await getDoc(docRef);
+            // if (documentSnapshot.exists()) {
+            //     const documentData = documentSnapshot.data();
+            //     const arrayField = documentData.arrayField || [];
 
-                const updatedArray = arrayField.filter((item: any) => item.id !== note.id);
+            //     const updatedArray = arrayField.filter((item: any) => item.id !== note.id);
 
-                await updateDoc(docRef, {
-                    arrayField: updatedArray
-                });
-                toast.success(<ToastText>Note deleted successfully!</ToastText>);
-                if (afterDelete) afterDelete()
-            } else {
-                toast(<ToastText>Document does not exist!</ToastText>);
-            }
+            //     await updateDoc(docRef, {
+            //         arrayField: updatedArray
+            //     });
+            //     toast.success(<ToastText>Note deleted successfully!</ToastText>);
+            //     if (afterDelete) afterDelete()
+            // } else {
+            //     toast(<ToastText>Document does not exist!</ToastText>);
+            // }
         } catch (error) {
             toast.error(<ToastText>Error deleting item</ToastText>);
         } finally {
@@ -111,33 +109,33 @@ const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePa
     };
 
     const deleteTemporarily = async (item: any) => {
-        const collectionRef = collection(db, "deletedNotes")
-        const userRef = doc(collectionRef, user.email)
-        const data = { ...item, favorite: false }
-        return await setDoc(userRef, {
-            arrayField: arrayUnion(...[data])
-        }, { merge: true })
+        // const collectionRef = collection(db, "deletedNotes")
+        // const userRef = doc(collectionRef, user.email)
+        // const data = { ...item, favorite: false }
+        // return await setDoc(userRef, {
+        //     arrayField: arrayUnion(...[data])
+        // }, { merge: true })
     };
 
     const deletePermanently = async () => {
         setIsDeleting(true)
-        const noteRef = doc(db, 'deletedNotes', user.email);
+        // const noteRef = doc(db, 'deletedNotes', user.email);
         try {
-            const documentSnapshot = await getDoc(noteRef);
-            if (documentSnapshot.exists()) {
-                const documentData = documentSnapshot.data();
-                const arrayField = documentData.arrayField || [];
+            // const documentSnapshot = await getDoc(noteRef);
+            // if (documentSnapshot.exists()) {
+            //     const documentData = documentSnapshot.data();
+            //     const arrayField = documentData.arrayField || [];
 
-                const updatedArray = arrayField.filter((item: any) => item.id !== note.id);
+            //     const updatedArray = arrayField.filter((item: any) => item.id !== note.id);
 
-                await updateDoc(noteRef, {
-                    arrayField: updatedArray
-                });
-                toast.success(<ToastText>Item deleted successfully!</ToastText>);
-                if (afterDelete) afterDelete()
-            } else {
-                toast(<ToastText>Document does not exist!</ToastText>);
-            }
+            //     await updateDoc(noteRef, {
+            //         arrayField: updatedArray
+            //     });
+            //     toast.success(<ToastText>Item deleted successfully!</ToastText>);
+            //     if (afterDelete) afterDelete()
+            // } else {
+            //     toast(<ToastText>Document does not exist!</ToastText>);
+            // }
         } catch (error) {
             toast.error(<ToastText>Error deleting item</ToastText>);
         } finally {
@@ -146,37 +144,36 @@ const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePa
     };
 
     const updateFavorite = async (bool: boolean) => {
-        console.log(bool)
         setNoteState(prev => ({ ...prev, favorite: bool }))
-        const docRef = doc(db, "notes", user.email)
+        // const docRef = doc(db, "notes", user.email)
         try {
-            const documentSnapshot = await getDoc(docRef);
-            if (documentSnapshot.exists()) {
-                const documentData = documentSnapshot.data();
-                const arrayField = documentData.arrayField || [];
+            // // const documentSnapshot = await getDoc(docRef);
+            // // if (documentSnapshot.exists()) {
+            // //     const documentData = documentSnapshot.data();
+            // //     const arrayField = documentData.arrayField || [];
 
-                const updatedArray = arrayField.map((item: any) => {
-                    if (item.id === note.id) {
-                        return {
-                            ...note,
-                            favorite: !note.favorite
-                        };
-                    }
-                    return item;
-                });
+            // //     const updatedArray = arrayField.map((item: any) => {
+            // //         if (item.id === note.id) {
+            // //             return {
+            // //                 ...note,
+            // //                 favorite: !note.favorite
+            // //             };
+            // //         }
+            // //         return item;
+            // //     });
 
-                await updateDoc(docRef, {
-                    arrayField: updatedArray
-                });
-                if (afterFavoriteUpdate) {
-                    afterFavoriteUpdate()
-                }
+            // //     await updateDoc(docRef, {
+            // //         arrayField: updatedArray
+            // //     });
+            // //     if (afterFavoriteUpdate) {
+            // //         afterFavoriteUpdate()
+            // //     }
 
-                if (bool) return toast.success(<small>Note added to favorites. <a className="underline cursor-pointer" onClick={() => navigate("/favourites")}>View All</a></small>)
-                toast.error(<small>Note removed favorites</small>)
-            } else {
-                toast.error(<ToastText>Document does not exist!</ToastText>, { position: "top-right" });
-            }
+            // //     if (bool) return toast.success(<small>Note added to favorites. <a className="underline cursor-pointer" onClick={() => navigate("/favourites")}>View All</a></small>)
+            // //     toast.error(<small>Note removed favorites</small>)
+            // } else {
+            //     toast.error(<ToastText>Document does not exist!</ToastText>, { position: "top-right" });
+            // }
         } catch (error) {
             setNoteState(prev => ({ ...prev, favorite: !note.favorite }))
             toast.error(<ToastText>Error updating item</ToastText>, { position: "top-right" });

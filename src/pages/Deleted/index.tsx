@@ -3,8 +3,6 @@ import { CgSearch } from "react-icons/cg"
 import NoteRow from "../../components/NoteRow/NoteRow"
 import { useState, useEffect } from "react"
 import { useUserStore } from "../../utils/Store"
-import { doc, getDoc } from "firebase/firestore"
-import { db } from "../../utils/Firebase"
 import NoNote from "../../components/NoNote"
 import toast from "react-hot-toast"
 import ToastText from "../../components/ToastText"
@@ -26,15 +24,15 @@ export default function Deleted() {
 
     const getNotes = async () => {
         setHomeState((prev) => ({ ...prev, isLoading: true }))
-        const docRef = doc(db, 'deletedNotes', user.email);
+        // const docRef = doc(db, 'deletedNotes', user.email);
 
         try {
-            const documentSnapshot = await getDoc(docRef);
-            if (documentSnapshot.exists()) {
-                const documentData = documentSnapshot.data();
-                const arrayField = documentData.arrayField || [];
-                setHomeState(prev => ({ ...prev, data: arrayField }))
-            }
+            // const documentSnapshot = await getDoc(docRef);
+            // if (documentSnapshot.exists()) {
+            //     const documentData = documentSnapshot.data();
+            //     const arrayField = documentData.arrayField || [];
+            //     setHomeState(prev => ({ ...prev, data: arrayField }))
+            // }
         } catch (error) {
             toast.error(<ToastText>An Error Occured</ToastText>);
         } finally {

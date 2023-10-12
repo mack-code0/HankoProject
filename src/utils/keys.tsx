@@ -1,0 +1,1 @@
+export const HANKO_API_URL = import.meta.env.VITE_HANKO_API_URL

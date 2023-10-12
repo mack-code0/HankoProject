@@ -1,8 +1,6 @@
 import * as Yup from "yup"
 import { useFormik, FormikProvider, ErrorMessage } from "formik"
-import { collection, doc, setDoc, arrayUnion } from 'firebase/firestore';
 import { useUserStore } from "../../../utils/Store";
-import { db } from "../../../utils/Firebase";
 import { v4 as uuidv4 } from "uuid";
 import toast from "react-hot-toast";
 import ToastSucccessText from "../../../components/ToastText";
@@ -30,20 +28,20 @@ const AddForm: React.FC<{ toggleModal: () => void, getNotes: () => void }> = ({ 
         validateOnBlur: false,
         onSubmit: async (val, formikProps) => {
             try {
-                const collectionRef = collection(db, "notes")
-                const userRef = doc(collectionRef, user.email)
-                const data = {
-                    title: val.noteCreationRequests[0].title,
-                    note: val.noteCreationRequests[0].note,
-                    favorite: false,
-                    id: uuidv4()
-                }
-                await setDoc(userRef, {
-                    arrayField: arrayUnion(...[data])
-                }, { merge: true })
-                toast.success(<ToastSucccessText>Added Note Successfully</ToastSucccessText>, { position: "top-right" })
-                formikProps.resetForm()
-                getNotes()
+                // const collectionRef = collection(db, "notes")
+                // const userRef = doc(collectionRef, user.email)
+                // const data = {
+                //     title: val.noteCreationRequests[0].title,
+                //     note: val.noteCreationRequests[0].note,
+                //     favorite: false,
+                //     id: uuidv4()
+                // }
+                // await setDoc(userRef, {
+                //     arrayField: arrayUnion(...[data])
+                // }, { merge: true })
+                // toast.success(<ToastSucccessText>Added Note Successfully</ToastSucccessText>, { position: "top-right" })
+                // formikProps.resetForm()
+                // getNotes()
             } catch (error) {
                 toast.error(`Error saving note`);
             }

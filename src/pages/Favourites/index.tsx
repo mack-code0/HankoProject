@@ -3,8 +3,6 @@ import { CgSearch } from "react-icons/cg"
 import NoteRow from "../../components/NoteRow/NoteRow"
 import { useState, useEffect } from "react"
 import { useUserStore } from "../../utils/Store"
-import { doc, getDoc } from "firebase/firestore"
-import { db } from "../../utils/Firebase"
 import NoNote from "../../components/NoNote"
 import toast from "react-hot-toast"
 import ToastText from "../../components/ToastText"
@@ -26,16 +24,16 @@ export default function Home() {
 
     const getFavoriteNotes = async () => {
         setState((prev) => ({ ...prev, isLoading: true }))
-        const docRef = doc(db, 'notes', user.email);
+        // const docRef = doc(db, 'notes', user.email);
 
         try {
-            const documentSnapshot = await getDoc(docRef);
-            if (documentSnapshot.exists()) {
-                const documentData = documentSnapshot.data();
-                const arrayField = documentData.arrayField || [];
-                const favoriteObjects = arrayField.filter((obj: any) => obj.favorite === true);
-                setState(prev => ({ ...prev, data: favoriteObjects }))
-            }
+            // const documentSnapshot = await getDoc(docRef);
+            // if (documentSnapshot.exists()) {
+            //     const documentData = documentSnapshot.data();
+            //     const arrayField = documentData.arrayField || [];
+            //     const favoriteObjects = arrayField.filter((obj: any) => obj.favorite === true);
+            //     setState(prev => ({ ...prev, data: favoriteObjects }))
+            // }
         } catch (error) {
             toast.error(<ToastText>Error getting array field</ToastText>);
         } finally {

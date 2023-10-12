@@ -1,8 +1,6 @@
 import * as Yup from "yup"
 import { useFormik, FormikProvider, ErrorMessage } from "formik"
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { useUserStore } from "../../../utils/Store";
-import { db } from "../../../utils/Firebase";
 import toast from "react-hot-toast";
 import ToastSucccessText from "../../../components/ToastText";
 import Spinner from "../../../components/Spinner";
@@ -34,33 +32,33 @@ const UpdateRow: React.FC<{
         initialValues: { ...note, title: note.title, note: note.note },
         validateOnBlur: false,
         onSubmit: async (val) => {
-            const docRef = doc(db, "notes", user.email)
+            // const docRef = doc(db, "notes", user.email)
             try {
-                const documentSnapshot = await getDoc(docRef);
-                if (documentSnapshot.exists()) {
-                    const documentData = documentSnapshot.data();
-                    const arrayField = documentData.arrayField || [];
+                // const documentSnapshot = await getDoc(docRef);
+                // if (documentSnapshot.exists()) {
+                //     const documentData = documentSnapshot.data();
+                //     const arrayField = documentData.arrayField || [];
 
-                    const updatedArray = arrayField.map((item: any) => {
-                        if (item.id === val.id) {
-                            return {
-                                ...val,
-                                id: item.id
-                            };
-                        }
-                        return item;
-                    });
+                //     const updatedArray = arrayField.map((item: any) => {
+                //         if (item.id === val.id) {
+                //             return {
+                //                 ...val,
+                //                 id: item.id
+                //             };
+                //         }
+                //         return item;
+                //     });
 
-                    await updateDoc(docRef, {
-                        arrayField: updatedArray
-                    });
-                    toast.success(<ToastSucccessText>Item updated successfully!</ToastSucccessText>, { position: "top-right" });
-                    if (afterUpdate) {
-                        afterUpdate(val)
-                    }
-                } else {
-                    toast.error(<ToastSucccessText>Document does not exist!</ToastSucccessText>, { position: "top-right" });
-                }
+                //     await updateDoc(docRef, {
+                //         arrayField: updatedArray
+                //     });
+                //     toast.success(<ToastSucccessText>Item updated successfully!</ToastSucccessText>, { position: "top-right" });
+                //     if (afterUpdate) {
+                //         afterUpdate(val)
+                //     }
+                // } else {
+                //     toast.error(<ToastSucccessText>Document does not exist!</ToastSucccessText>, { position: "top-right" });
+                // }
             } catch (error) {
                 toast.error(<ToastSucccessText>Error updating item</ToastSucccessText>, { position: "top-right" });
             }
