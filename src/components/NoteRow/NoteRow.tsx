@@ -12,6 +12,7 @@ import { IoIosUndo } from "react-icons/io"
 import { HeartFilled, HeartOutlined } from '@ant-design/icons';
 import { Rate } from 'antd';
 import { useNavigate } from "react-router-dom"
+import supabaseClient from "../../utils/supabaseClient"
 
 interface Props {
     note: {
@@ -76,68 +77,55 @@ const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePa
     };
 
     const [isDeleting, setIsDeleting] = useState(false)
-    const deleteNoteFromNotes = async (temporarily: boolean) => {
+    
+
+    const deleteTemporarily = async () => {
         setIsDeleting(true)
 
-        if (temporarily) {
-            await deleteTemporarily(note)
-        }
-
-        // const docRef = doc(db, 'notes', user.email);
-
         try {
-            // const documentSnapshot = await getDoc(docRef);
-            // if (documentSnapshot.exists()) {
-            //     const documentData = documentSnapshot.data();
-            //     const arrayField = documentData.arrayField || [];
+            const temporaryNoteResponse = await supabaseClient
+                .from('temporaryNotes')
+                .insert([{ ...note }])
 
-            //     const updatedArray = arrayField.filter((item: any) => item.id !== note.id);
+            if (temporaryNoteResponse.error) {
+                throw temporaryNoteResponse.error
+            }
 
-            //     await updateDoc(docRef, {
-            //         arrayField: updatedArray
-            //     });
-            //     toast.success(<ToastText>Note deleted successfully!</ToastText>);
-            //     if (afterDelete) afterDelete()
-            // } else {
-            //     toast(<ToastText>Document does not exist!</ToastText>);
-            // }
-        } catch (error) {
-            toast.error(<ToastText>Error deleting item</ToastText>);
+            const deleteNoteResponse = await supabaseClient
+                .from('notes')
+                .delete()
+                .eq('id', note.id)
+
+            if (deleteNoteResponse.error) {
+                throw deleteNoteResponse.error
+            }
+
+            toast.success(<ToastText>Item deleted successfully!</ToastText>);
+            if (afterDelete) afterDelete()
+        } catch (error: any) {
+            toast.error(<ToastText>{error?.message || "Error deleting item"}</ToastText>);
         } finally {
             setIsDeleting(false)
         }
     };
 
-    const deleteTemporarily = async (item: any) => {
-        // const collectionRef = collection(db, "deletedNotes")
-        // const userRef = doc(collectionRef, user.email)
-        // const data = { ...item, favorite: false }
-        // return await setDoc(userRef, {
-        //     arrayField: arrayUnion(...[data])
-        // }, { merge: true })
-    };
-
     const deletePermanently = async () => {
         setIsDeleting(true)
-        // const noteRef = doc(db, 'deletedNotes', user.email);
+
         try {
-            // const documentSnapshot = await getDoc(noteRef);
-            // if (documentSnapshot.exists()) {
-            //     const documentData = documentSnapshot.data();
-            //     const arrayField = documentData.arrayField || [];
+            const { error } = await supabaseClient
+                .from('notes')
+                .delete()
+                .eq('id', note.id)
 
-            //     const updatedArray = arrayField.filter((item: any) => item.id !== note.id);
+            if (error) {
+                throw error
+            }
 
-            //     await updateDoc(noteRef, {
-            //         arrayField: updatedArray
-            //     });
-            //     toast.success(<ToastText>Item deleted successfully!</ToastText>);
-            //     if (afterDelete) afterDelete()
-            // } else {
-            //     toast(<ToastText>Document does not exist!</ToastText>);
-            // }
-        } catch (error) {
-            toast.error(<ToastText>Error deleting item</ToastText>);
+            toast.success(<ToastText>Item deleted successfully!</ToastText>);
+            if (afterDelete) afterDelete()
+        } catch (error: any) {
+            toast.error(<ToastText>{error?.message || "Error deleting item"}</ToastText>);
         } finally {
             setIsDeleting(false)
         }
@@ -145,38 +133,27 @@ const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePa
 
     const updateFavorite = async (bool: boolean) => {
         setNoteState(prev => ({ ...prev, favorite: bool }))
-        // const docRef = doc(db, "notes", user.email)
+
         try {
-            // // const documentSnapshot = await getDoc(docRef);
-            // // if (documentSnapshot.exists()) {
-            // //     const documentData = documentSnapshot.data();
-            // //     const arrayField = documentData.arrayField || [];
+            const response = await supabaseClient
+                .from('notes')
+                .update({ favorite: !note.favorite })
+                .eq('id', note.id)
+                .select()
 
-            // //     const updatedArray = arrayField.map((item: any) => {
-            // //         if (item.id === note.id) {
-            // //             return {
-            // //                 ...note,
-            // //                 favorite: !note.favorite
-            // //             };
-            // //         }
-            // //         return item;
-            // //     });
+            if (response.error) {
+                throw response.error
+            }
 
-            // //     await updateDoc(docRef, {
-            // //         arrayField: updatedArray
-            // //     });
-            // //     if (afterFavoriteUpdate) {
-            // //         afterFavoriteUpdate()
-            // //     }
+            if (afterFavoriteUpdate) {
+                afterFavoriteUpdate()
+            }
 
-            // //     if (bool) return toast.success(<small>Note added to favorites. <a className="underline cursor-pointer" onClick={() => navigate("/favourites")}>View All</a></small>)
-            // //     toast.error(<small>Note removed favorites</small>)
-            // } else {
-            //     toast.error(<ToastText>Document does not exist!</ToastText>, { position: "top-right" });
-            // }
-        } catch (error) {
+            if (bool) return toast.success(<small>Note added to favorites. <a className="underline cursor-pointer" onClick={() => navigate("/favourites")}>View All</a></small>)
+            toast.error(<small>Note removed favorites</small>)
+        } catch (error: any) {
             setNoteState(prev => ({ ...prev, favorite: !note.favorite }))
-            toast.error(<ToastText>Error updating item</ToastText>, { position: "top-right" });
+            toast.error(<ToastText>{error?.message || "Error updating item"}</ToastText>, { position: "top-right" });
         }
     }
 
@@ -254,8 +231,8 @@ const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePa
                         <Dropdown
                             trigger={["click"]}
                             overlay={<Menu className="bg-[#393939] bg-opacity-80 rounded-xl overflow-hidden py-0">
-                                <Menu.Item onClick={() => deleteNoteFromNotes(true)} className="font-inter hover:bg-[#242424] py-2" key={1}>Delete</Menu.Item>
-                                <Menu.Item onClick={() => deleteNoteFromNotes(false)} className="!text-white !bg-red-700 font-inter py-2" key={2}>Delete Permanently</Menu.Item>
+                                <Menu.Item onClick={() => deleteTemporarily()} className="font-inter hover:bg-[#242424] py-2" key={1}>Delete</Menu.Item>
+                                <Menu.Item onClick={() => deletePermanently()} className="!text-white !bg-red-700 font-inter py-2" key={2}>Delete Permanently</Menu.Item>
                             </Menu>}>
                             <button
                                 disabled={isDeleting}

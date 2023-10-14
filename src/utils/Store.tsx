@@ -1,7 +1,8 @@
 import { StoreApi, create } from 'zustand';
+import { User } from './types';
 
 interface UserState {
-    user: null | any;
+    user: null | User;
     setUser: (value: any) => void;
 }
 

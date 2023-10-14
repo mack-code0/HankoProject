@@ -16,7 +16,7 @@ function Login() {
         try {
             const { data: users, error } = await supabaseClient
                 .from('users')
-                .select('id')
+                .select('*')
                 .eq('email', email)
 
             if (error) {
@@ -26,12 +26,12 @@ function Login() {
             const user = users as User[]
 
             if (user.length === 0) {
-                const savedUserResponse = await supabaseClient
+                const userResponse = await supabaseClient
                     .from('users')
                     .insert([{ email, hankoId }])
                     .select()
 
-                if (savedUserResponse.error) {
+                if (userResponse.error) {
                     throw error
                 }
             }

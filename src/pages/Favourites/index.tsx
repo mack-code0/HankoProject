@@ -7,6 +7,7 @@ import NoNote from "../../components/NoNote"
 import toast from "react-hot-toast"
 import ToastText from "../../components/ToastText"
 import { CustomInput } from "../Home"
+import supabaseClient from "../../utils/supabaseClient"
 
 export default function Home() {
     const user = useUserStore((state) => state.user)
@@ -24,18 +25,21 @@ export default function Home() {
 
     const getFavoriteNotes = async () => {
         setState((prev) => ({ ...prev, isLoading: true }))
-        // const docRef = doc(db, 'notes', user.email);
 
         try {
-            // const documentSnapshot = await getDoc(docRef);
-            // if (documentSnapshot.exists()) {
-            //     const documentData = documentSnapshot.data();
-            //     const arrayField = documentData.arrayField || [];
-            //     const favoriteObjects = arrayField.filter((obj: any) => obj.favorite === true);
-            //     setState(prev => ({ ...prev, data: favoriteObjects }))
-            // }
-        } catch (error) {
-            toast.error(<ToastText>Error getting array field</ToastText>);
+            let { data: notes, error } = await supabaseClient
+                .from('notes')
+                .select('*')
+                .eq("user", user?.hankoId)
+                .is("favorite", true)
+                .order("createdAt", { ascending: true })
+
+            if (error) {
+                throw error
+            }
+            setState(prev => ({ ...prev, data: notes }))
+        } catch (error: any) {
+            toast.error(<ToastText>{error?.message || "Error getting array field"}</ToastText>);
         } finally {
             setState((prev) => ({ ...prev, isLoading: false }))
         }

@@ -5,13 +5,15 @@ import { TbSquareRoundedPlusFilled } from "react-icons/tb"
 import NoteRow from "../../components/NoteRow/NoteRow"
 import AddNote from "./subComponents/AddNote"
 import { useState, useEffect } from "react"
-import { useUserStore } from "../../utils/Store"
 import NoNote from "../../components/NoNote"
 import toast from "react-hot-toast"
 import ToastText from "../../components/ToastText"
+import supabaseClient from "../../utils/supabaseClient"
+import { useUserStore } from "../../utils/Store"
 
 export default function Home() {
     const user = useUserStore((state) => state.user)
+
     const [homeState, setHomeState] = useState({
         data: [] as any,
         initialData: [],
@@ -21,28 +23,28 @@ export default function Home() {
     const [addNote, setAddNote] = useState(false)
     const toggleAddNote = () => setAddNote(!addNote)
 
-    const afterDelete = (id: string) => {
-        setHomeState(prev => {
-            const tempNoteArr = prev.data.filter((val: any) => val.id !== id)
-            return { ...prev, data: [...tempNoteArr] }
-        })
+    const afterDelete = () => {
+        getNotes()
     }
 
     const getNotes = async () => {
         setHomeState((prev) => ({ ...prev, isLoading: true }))
-        // const docRef = doc(db, 'notes', user.email);
 
         try {
-            // const documentSnapshot = await getDoc(docRef);
-            // if (documentSnapshot.exists()) {
-            //     const documentData = documentSnapshot.data();
-            //     const arrayField = documentData.arrayField || [];
-            //     setHomeState(prev => ({ ...prev, data: arrayField, tempData: arrayField }))
-            // } else {
-            //     toast(<ToastText>Welcome to your Notes!. Please add a new note to get started.</ToastText>, { duration: 10000 });
-            // }
-        } catch (error) {
-            toast.error(<ToastText>Error getting array field</ToastText>);
+            let { data: notes, error } = await supabaseClient
+                .from('notes')
+                .select('*')
+                .eq("user", user?.hankoId)
+                .order("createdAt", { ascending: true })
+
+            if (error) {
+                throw error
+            }
+
+            setHomeState(prev => ({ ...prev, data: notes, tempData: notes }))
+            // toast(<ToastText>Welcome to your Notes!. Please add a new note to get started.</ToastText>, { duration: 10000 });
+        } catch (error: any) {
+            toast.error(<ToastText>{error?.message || "Error getting array field"}</ToastText>);
         } finally {
             setHomeState((prev) => ({ ...prev, isLoading: false }))
         }
@@ -86,7 +88,7 @@ export default function Home() {
                     ? <NoNote />
                     : homeState.data.map((note: any, idx: number) =>
                         <NoteRow
-                            afterDelete={() => afterDelete(note.id)}
+                            afterDelete={() => afterDelete()}
                             key={idx}
                             note={note}
                             containerClassName={note.hidden ? "hidden" : ""}

@@ -7,6 +7,7 @@ import NoNote from "../../components/NoNote"
 import toast from "react-hot-toast"
 import ToastText from "../../components/ToastText"
 import { CustomInput } from "../Home"
+import supabaseClient from "../../utils/supabaseClient"
 
 export default function Deleted() {
     const user = useUserStore((state) => state.user)
@@ -24,17 +25,21 @@ export default function Deleted() {
 
     const getNotes = async () => {
         setHomeState((prev) => ({ ...prev, isLoading: true }))
-        // const docRef = doc(db, 'deletedNotes', user.email);
 
         try {
-            // const documentSnapshot = await getDoc(docRef);
-            // if (documentSnapshot.exists()) {
-            //     const documentData = documentSnapshot.data();
-            //     const arrayField = documentData.arrayField || [];
-            //     setHomeState(prev => ({ ...prev, data: arrayField }))
-            // }
-        } catch (error) {
-            toast.error(<ToastText>An Error Occured</ToastText>);
+            let { data: notes, error } = await supabaseClient
+                .from('temporaryNotes')
+                .select('*')
+                .eq("user", user?.hankoId)
+                .order("createdAt", { ascending: true })
+
+            if (error) {
+                throw error
+            }
+
+            setHomeState(prev => ({ ...prev, data: notes }))
+        } catch (error: any) {
+            toast.error(<ToastText>{error?.message || "An Error Occured"}</ToastText>);
         } finally {
             setHomeState((prev) => ({ ...prev, isLoading: false }))
         }

@@ -1,10 +1,10 @@
 import * as Yup from "yup"
 import { useFormik, FormikProvider, ErrorMessage } from "formik"
 import { useUserStore } from "../../../utils/Store";
-import { v4 as uuidv4 } from "uuid";
 import toast from "react-hot-toast";
 import ToastSucccessText from "../../../components/ToastText";
 import Spinner from "../../../components/Spinner";
+import supabaseClient from "../../../utils/supabaseClient";
 
 interface FormikValues {
     noteCreationRequests: {
@@ -26,8 +26,23 @@ const AddForm: React.FC<{ toggleModal: () => void, getNotes: () => void }> = ({ 
     const formik = useFormik<FormikValues>({
         initialValues: { noteCreationRequests: [{ title: "", note: "" }] },
         validateOnBlur: false,
-        onSubmit: async (val, formikProps) => {
+        onSubmit: async (val) => {
             try {
+
+                const { data, error } = await supabaseClient
+                    .from('notes')
+                    .insert([
+                        {
+                            title: val.noteCreationRequests[0].title,
+                            note: val.noteCreationRequests[0].note,
+                            user: user?.hankoId
+                        },
+                    ])
+                    .select("*")
+
+                console.log(data)
+                console.log(error)
+
                 // const collectionRef = collection(db, "notes")
                 // const userRef = doc(collectionRef, user.email)
                 // const data = {

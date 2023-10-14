@@ -1,9 +1,9 @@
 import * as Yup from "yup"
 import { useFormik, FormikProvider, ErrorMessage } from "formik"
-import { useUserStore } from "../../../utils/Store";
 import toast from "react-hot-toast";
 import ToastSucccessText from "../../../components/ToastText";
 import Spinner from "../../../components/Spinner";
+import supabaseClient from "../../../utils/supabaseClient";
 
 interface FormikValues {
     title: string
@@ -25,42 +25,29 @@ const UpdateRow: React.FC<{
     afterUpdate?: ((val: any) => void) | null,
     note: any
 }> = ({ toggleModal, afterUpdate, note }) => {
-    const user = useUserStore((state) => state.user)
-
     const formik = useFormik<FormikValues>({
         validationSchema,
         initialValues: { ...note, title: note.title, note: note.note },
         validateOnBlur: false,
-        onSubmit: async (val) => {
-            // const docRef = doc(db, "notes", user.email)
+        onSubmit: async (formValues) => {
             try {
-                // const documentSnapshot = await getDoc(docRef);
-                // if (documentSnapshot.exists()) {
-                //     const documentData = documentSnapshot.data();
-                //     const arrayField = documentData.arrayField || [];
+                const response = await supabaseClient
+                    .from('notes')
+                    .update({ note: formValues.note, title: formValues.title })
+                    .eq('id', formValues.id)
+                    .select()
 
-                //     const updatedArray = arrayField.map((item: any) => {
-                //         if (item.id === val.id) {
-                //             return {
-                //                 ...val,
-                //                 id: item.id
-                //             };
-                //         }
-                //         return item;
-                //     });
+                if (response.error) {
+                    throw response.error
+                }
 
-                //     await updateDoc(docRef, {
-                //         arrayField: updatedArray
-                //     });
-                //     toast.success(<ToastSucccessText>Item updated successfully!</ToastSucccessText>, { position: "top-right" });
-                //     if (afterUpdate) {
-                //         afterUpdate(val)
-                //     }
-                // } else {
-                //     toast.error(<ToastSucccessText>Document does not exist!</ToastSucccessText>, { position: "top-right" });
-                // }
-            } catch (error) {
-                toast.error(<ToastSucccessText>Error updating item</ToastSucccessText>, { position: "top-right" });
+                toast.success(<ToastSucccessText>Item updated successfully!</ToastSucccessText>, { position: "top-right" });
+
+                if (afterUpdate) {
+                    afterUpdate(formValues)
+                }
+            } catch (error: any) {
+                toast.error(<ToastSucccessText>{error?.message || "Error updating item"}</ToastSucccessText>, { position: "top-right" });
             }
         }
     })
