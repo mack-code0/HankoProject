@@ -1,6 +1,6 @@
 import styled from "styled-components"
 import { BiHome } from "react-icons/bi"
-import { CgHeart, CgLogOut, CgNotes, CgTrash } from "react-icons/cg"
+import { CgHeart, CgLogOut, CgNotes, CgTrash, CgUserAdd } from "react-icons/cg"
 import { Link } from "react-router-dom"
 import { Avatar } from "antd"
 import { useUserStore } from "../../utils/Store"
@@ -39,6 +39,11 @@ export default function Sidebar() {
                     to={"/deleted"}
                     className={`${activeTab === "/deleted" ? "bg-blue100" : "hover:bg-white hover:bg-opacity-5"} hover:text-white transition-all rounded-full py-3 px-6 w-[10rem] flex flex-row items-center font-inter text-sm font-bold`}>
                     <CgTrash className="mr-4 text-xl" />Deleted
+                </Button>
+                <Button
+                    to={"/profile"}
+                    className={`${activeTab === "/profile" ? "bg-blue100" : "hover:bg-white hover:bg-opacity-5"} hover:text-white transition-all rounded-full py-3 px-6 w-[10rem] flex flex-row items-center font-inter text-sm font-bold`}>
+                    <CgUserAdd className="mr-4 text-xl" />Profile
                 </Button>
                 <button
                     onClick={() => handleLogout()}

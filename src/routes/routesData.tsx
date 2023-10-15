@@ -2,6 +2,7 @@ import Login from '../pages/Auth/Login'
 import Deleted from '../pages/Deleted'
 import Favourites from '../pages/Favourites'
 import Home from '../pages/Home'
+import Profile from '../pages/Profile'
 
 export interface routeInterface {
   path: string
@@ -33,6 +34,11 @@ export const homeRoutes: routeInterface[] = [
     path: "/deleted",
     component: Deleted,
     breadcrumb: [{ title: "Deleted", route: "/deleted" }],
+  },
+  {
+    path: "/profile",
+    component: Profile,
+    breadcrumb: [{ title: "Profile", route: "/profile" }],
   },
 ];
 
