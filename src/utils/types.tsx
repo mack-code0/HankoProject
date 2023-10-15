@@ -7,5 +7,9 @@ export type User = {
 };
 
 export type note = {
-
+    title: string
+    note: string
+    id: string
+    favorite: boolean
+    user: string
 }

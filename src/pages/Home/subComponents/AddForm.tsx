@@ -26,10 +26,10 @@ const AddForm: React.FC<{ toggleModal: () => void, getNotes: () => void }> = ({ 
     const formik = useFormik<FormikValues>({
         initialValues: { noteCreationRequests: [{ title: "", note: "" }] },
         validateOnBlur: false,
-        onSubmit: async (val) => {
+        onSubmit: async (val, formikProps) => {
             try {
 
-                const { data, error } = await supabaseClient
+                const response = await supabaseClient
                     .from('notes')
                     .insert([
                         {
@@ -38,27 +38,17 @@ const AddForm: React.FC<{ toggleModal: () => void, getNotes: () => void }> = ({ 
                             user: user?.hankoId
                         },
                     ])
-                    .select("*")
 
-                console.log(data)
-                console.log(error)
+                if (response.error) {
+                    throw response.error
+                }
 
-                // const collectionRef = collection(db, "notes")
-                // const userRef = doc(collectionRef, user.email)
-                // const data = {
-                //     title: val.noteCreationRequests[0].title,
-                //     note: val.noteCreationRequests[0].note,
-                //     favorite: false,
-                //     id: uuidv4()
-                // }
-                // await setDoc(userRef, {
-                //     arrayField: arrayUnion(...[data])
-                // }, { merge: true })
-                // toast.success(<ToastSucccessText>Added Note Successfully</ToastSucccessText>, { position: "top-right" })
-                // formikProps.resetForm()
-                // getNotes()
-            } catch (error) {
-                toast.error(`Error saving note`);
+                toast.success(<ToastSucccessText>Added Note Successfully</ToastSucccessText>, { position: "top-right" })
+                formikProps.resetForm()
+                toggleModal()
+                getNotes()
+            } catch (error: any) {
+                toast.error(error?.message || `Error saving note`);
             }
         },
         validationSchema

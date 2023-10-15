@@ -1,4 +1,4 @@
-import { Skeleton } from "antd"
+import { Input, Skeleton } from "antd"
 import { CgSearch } from "react-icons/cg"
 import NoteRow from "../../components/NoteRow/NoteRow"
 import { useState, useEffect } from "react"
@@ -6,8 +6,8 @@ import { useUserStore } from "../../utils/Store"
 import NoNote from "../../components/NoNote"
 import toast from "react-hot-toast"
 import ToastText from "../../components/ToastText"
-import { CustomInput } from "../Home"
 import supabaseClient from "../../utils/supabaseClient"
+import styled from "styled-components"
 
 export default function Deleted() {
     const user = useUserStore((state) => state.user)
@@ -72,3 +72,19 @@ export default function Deleted() {
         </div>
     </div>
 }
+
+export const CustomInput = styled(Input)`
+    background-color: #393939 !important;
+    border: none;
+    border-radius: 25px;
+    box-shadow: none;
+    padding-left: 17px !important;
+    padding-right: 17px !important;
+    input{
+        background-color: #393939 !important;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+        color: white;
+        font-family: inter;
+    }
+`

@@ -1,6 +1,5 @@
 import styled from "styled-components"
-import { Input, Skeleton } from "antd"
-import { CgSearch } from "react-icons/cg"
+import { Skeleton } from "antd"
 import { TbSquareRoundedPlusFilled } from "react-icons/tb"
 import NoteRow from "../../components/NoteRow/NoteRow"
 import AddNote from "./subComponents/AddNote"
@@ -10,6 +9,8 @@ import toast from "react-hot-toast"
 import ToastText from "../../components/ToastText"
 import supabaseClient from "../../utils/supabaseClient"
 import { useUserStore } from "../../utils/Store"
+import SearchComponent from "./subComponents/SearchComponent"
+import { note } from "../../utils/types"
 
 export default function Home() {
     const user = useUserStore((state) => state.user)
@@ -26,6 +27,13 @@ export default function Home() {
     const afterDelete = () => {
         getNotes()
     }
+
+    const afterUpdate = (updatedValue: any) => setHomeState(prev => {
+        let tempArr: any = [...prev.data]
+        const idx = tempArr.findIndex((val: any) => updatedValue.id === val.id)
+        tempArr[idx] = updatedValue
+        return { ...prev, data: [...tempArr] }
+    })
 
     const getNotes = async () => {
         setHomeState((prev) => ({ ...prev, isLoading: true }))
@@ -54,26 +62,8 @@ export default function Home() {
         getNotes()
     }, [])
 
-    const [inputText, setInputText] = useState("")
-    const handleSearchText = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const searchText = e.target.value;
-        setInputText(searchText);
-
-        if (searchText === '') {
-            setHomeState((prev) => ({ ...prev, data: prev.initialData }));
-        } else {
-            const filteredData = homeState.initialData.filter(obj => {
-                const { note, title } = obj;
-                const pattern = new RegExp(searchText, 'i'); // 'i' flag for case-insensitive search
-                return pattern.test(note) || pattern.test(title);
-            });
-            setHomeState((prev) => ({ ...prev, data: filteredData }))
-        }
-    }
-
     return <Container className="p-8 h-screen">
-        <CustomInput onChange={handleSearchText} value={inputText} size="large" placeholder="Search notes" prefix={<CgSearch className="mr-3 text-2xl text-white" />} />
-
+        <SearchComponent afterDelete={afterDelete} afterUpdate={afterUpdate} />
         <TbSquareRoundedPlusFilled onClick={toggleAddNote} className="text-6xl cursor-pointer transition-all hover:text-opacity-70 text-white fixed bottom-10 right-10" />
         <AddNote getNotes={getNotes} open={addNote} toggle={toggleAddNote} />
 
@@ -86,18 +76,12 @@ export default function Home() {
                 </>
                 : homeState.data.length < 1
                     ? <NoNote />
-                    : homeState.data.map((note: any, idx: number) =>
+                    : homeState.data.map((note: note, idx: number) =>
                         <NoteRow
                             afterDelete={() => afterDelete()}
                             key={idx}
                             note={note}
-                            containerClassName={note.hidden ? "hidden" : ""}
-                            afterUpdate={(updatedValue: any) => setHomeState(prev => {
-                                let tempArr: any = [...prev.data]
-                                const idx = tempArr.findIndex((val: any) => updatedValue.id === val.id)
-                                tempArr[idx] = updatedValue
-                                return { ...prev, data: [...tempArr] }
-                            })}
+                            afterUpdate={afterUpdate}
                         />
                     )}
         </div>
@@ -105,19 +89,4 @@ export default function Home() {
 }
 
 const Container = styled.div`
-`
-export const CustomInput = styled(Input)`
-    background-color: #393939 !important;
-    border: none;
-    border-radius: 25px;
-    box-shadow: none;
-    padding-left: 17px !important;
-    padding-right: 17px !important;
-    input{
-        background-color: #393939 !important;
-        padding-top: 10px !important;
-        padding-bottom: 10px !important;
-        color: white;
-        font-family: inter;
-    }
 `

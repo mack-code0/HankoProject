@@ -25,10 +25,9 @@ interface Props {
     afterUpdate?: (val: any) => void
     afterFavoriteUpdate?: () => void
     fromDeletePage?: boolean
-    containerClassName?: string
 }
 
-const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePage, afterFavoriteUpdate, containerClassName }) => {
+const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePage, afterFavoriteUpdate }) => {
     const navigate = useNavigate()
     const user = useUserStore((state) => state.user)
     const [noteState, setNoteState] = useState(note)
@@ -43,32 +42,27 @@ const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePa
     const restoreTemporarilyDeletedNotes = async () => {
         setIsRestoringNote(true)
         try {
-            // Delete the notes from the deletedNotes collection
-            // const noteRef = doc(db, 'deletedNotes', user.email);
-            // const documentSnapshot = await getDoc(noteRef);
-            // if (documentSnapshot.exists()) {
-            //     const documentData = documentSnapshot.data();
-            //     const arrayField = documentData.arrayField || [];
+            const restoreNoteResponse = await supabaseClient
+                .from('notes')
+                .insert([{ ...note }])
+                .eq("user", user?.hankoId)
 
-            //     const updatedArray = arrayField.filter((item: any) => item.id !== note.id);
+            if (restoreNoteResponse.error) {
+                throw restoreNoteResponse.error
+            }
 
-            //     await updateDoc(noteRef, {
-            //         arrayField: updatedArray
-            //     });
+            const deleteNoteFromTempResponse = await supabaseClient
+                .from('temporaryNotes')
+                .delete()
+                .eq("user", user?.hankoId)
+                .eq('id', note.id)
 
-            //     // Move the notes to the main notes collection
-            //     const collectionRef = collection(db, "notes")
-            //     const userRef = doc(collectionRef, user.email)
-            //     const data = { ...note }
-            //     await setDoc(userRef, {
-            //         arrayField: arrayUnion(...[data])
-            //     }, { merge: true })
+            if (deleteNoteFromTempResponse.error) {
+                throw deleteNoteFromTempResponse.error
+            }
 
-            //     if (afterDelete) afterDelete()
-            //     toast.success(<ToastText>Note Successfully Restored</ToastText>)
-            // } else {
-            //     return toast.error(<ToastText>Document does not exist!</ToastText>);
-            // }
+            if (afterDelete) afterDelete()
+            toast.success(<ToastText>Note Successfully Restored</ToastText>)
         } catch (error) {
             toast.error(`Error restoring note`);
         } finally {
@@ -77,7 +71,7 @@ const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePa
     };
 
     const [isDeleting, setIsDeleting] = useState(false)
-    
+
 
     const deleteTemporarily = async () => {
         setIsDeleting(true)
@@ -85,7 +79,8 @@ const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePa
         try {
             const temporaryNoteResponse = await supabaseClient
                 .from('temporaryNotes')
-                .insert([{ ...note }])
+                .insert([{ ...note, favorite: false }])
+                .eq("user", user?.hankoId)
 
             if (temporaryNoteResponse.error) {
                 throw temporaryNoteResponse.error
@@ -94,13 +89,14 @@ const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePa
             const deleteNoteResponse = await supabaseClient
                 .from('notes')
                 .delete()
+                .eq("user", user?.hankoId)
                 .eq('id', note.id)
 
             if (deleteNoteResponse.error) {
                 throw deleteNoteResponse.error
             }
 
-            toast.success(<ToastText>Item deleted successfully!</ToastText>);
+            toast.success(<ToastText>Item temporarily deleted!</ToastText>);
             if (afterDelete) afterDelete()
         } catch (error: any) {
             toast.error(<ToastText>{error?.message || "Error deleting item"}</ToastText>);
@@ -116,6 +112,7 @@ const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePa
             const { error } = await supabaseClient
                 .from('notes')
                 .delete()
+                .eq("user", user?.hankoId)
                 .eq('id', note.id)
 
             if (error) {
@@ -138,6 +135,7 @@ const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePa
             const response = await supabaseClient
                 .from('notes')
                 .update({ favorite: !note.favorite })
+                .eq("user", user?.hankoId)
                 .eq('id', note.id)
                 .select()
 
@@ -158,7 +156,7 @@ const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePa
     }
 
 
-    return <div className={`${containerClassName} flex flex-row items-start`}>
+    return <div className={`flex flex-row items-start`}>
         <SideModal open={viewNote} header="View" toggle={toggleViewNote}>
             <div className="mt-20">
                 <p className="text-white font-semibold font-figtree text-base">📌 Title</p>
