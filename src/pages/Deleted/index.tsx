@@ -1,5 +1,4 @@
 import { Input, Skeleton } from "antd"
-import { CgSearch } from "react-icons/cg"
 import NoteRow from "../../components/NoteRow/NoteRow"
 import { useState, useEffect } from "react"
 import { useUserStore } from "../../utils/Store"
@@ -8,6 +7,7 @@ import toast from "react-hot-toast"
 import ToastText from "../../components/ToastText"
 import supabaseClient from "../../utils/supabaseClient"
 import styled from "styled-components"
+import SearchComponent from "./subComponents/SearchComponent"
 
 export default function Deleted() {
     const user = useUserStore((state) => state.user)
@@ -16,7 +16,7 @@ export default function Deleted() {
         isLoading: true
     })
 
-    const afterDelete = (id: string) => {
+    const afterNoteRestored = (id: string) => {
         setHomeState(prev => {
             const tempNoteArr = prev.data.filter((val: any) => val.id !== id)
             return { ...prev, data: [...tempNoteArr] }
@@ -50,7 +50,7 @@ export default function Deleted() {
     }, [])
 
     return <div className="p-8 h-screen">
-        <CustomInput size="large" placeholder="Search notes" prefix={<CgSearch className="mr-3 text-2xl text-white" />} />
+        <SearchComponent afterNoteRestored={afterNoteRestored} />
 
         <div className="mt-20 space-y-10 pb-20">
             {homeState.isLoading
@@ -64,7 +64,7 @@ export default function Deleted() {
                     : homeState.data.map((note: any, idx: number) =>
                         <NoteRow
                             fromDeletePage={true}
-                            afterDelete={() => afterDelete(note.id)}
+                            afterNoteRestored={() => afterNoteRestored(note.id)}
                             key={idx}
                             note={note}
                         />

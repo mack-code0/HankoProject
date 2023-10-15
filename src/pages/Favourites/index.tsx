@@ -1,5 +1,4 @@
 import { Input, Skeleton } from "antd"
-import { CgSearch } from "react-icons/cg"
 import NoteRow from "../../components/NoteRow/NoteRow"
 import { useState, useEffect } from "react"
 import { useUserStore } from "../../utils/Store"
@@ -8,6 +7,7 @@ import toast from "react-hot-toast"
 import ToastText from "../../components/ToastText"
 import supabaseClient from "../../utils/supabaseClient"
 import styled from "styled-components"
+import SearchComponent from "../Home/subComponents/SearchComponent"
 
 export default function Home() {
     const user = useUserStore((state) => state.user)
@@ -51,7 +51,10 @@ export default function Home() {
     }, [])
 
     return <div className="p-8 h-screen">
-        <CustomInput size="large" placeholder="Search notes" prefix={<CgSearch className="mr-3 text-2xl text-white" />} />
+        <SearchComponent
+            afterDelete={() => getFavoriteNotes()}
+            afterUpdate={() => getFavoriteNotes()}
+            afterFavoriteUpdate={() => getFavoriteNotes()} />
 
         <div className="mt-20 space-y-10 pb-20">
             {state.isLoading

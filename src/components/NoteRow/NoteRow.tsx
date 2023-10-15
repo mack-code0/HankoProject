@@ -24,10 +24,11 @@ interface Props {
     afterDelete?: () => void
     afterUpdate?: (val: any) => void
     afterFavoriteUpdate?: () => void
+    afterNoteRestored?: () => void
     fromDeletePage?: boolean
 }
 
-const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePage, afterFavoriteUpdate }) => {
+const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePage, afterFavoriteUpdate, afterNoteRestored }) => {
     const navigate = useNavigate()
     const user = useUserStore((state) => state.user)
     const [noteState, setNoteState] = useState(note)
@@ -61,7 +62,7 @@ const NoteRow: React.FC<Props> = ({ note, afterDelete, afterUpdate, fromDeletePa
                 throw deleteNoteFromTempResponse.error
             }
 
-            if (afterDelete) afterDelete()
+            if (afterNoteRestored) afterNoteRestored()
             toast.success(<ToastText>Note Successfully Restored</ToastText>)
         } catch (error) {
             toast.error(`Error restoring note`);

@@ -14,10 +14,8 @@ import NoNote from "../../../components/NoNote";
 import { note } from "../../../utils/types";
 
 const SearchComponent: React.FC<{
-    afterDelete: () => void
-    afterUpdate: (val: any) => void
-    afterFavoriteUpdate?: () => void
-}> = ({ afterDelete, afterUpdate, afterFavoriteUpdate }) => {
+    afterNoteRestored: (id: string) => void
+}> = ({ afterNoteRestored }) => {
     const user = useUserStore((state) => state.user)
     const { handleChange, values } = useFormik({
         initialValues: { searchText: "" },
@@ -29,11 +27,9 @@ const SearchComponent: React.FC<{
         data: [] as any
     })
 
-    const updateSearchedValues = (updatedValue: any) => setDataState(prev => {
-        let tempArr: any = [...prev.data]
-        const idx = tempArr.findIndex((val: any) => updatedValue.id === val.id)
-        tempArr[idx] = updatedValue
-        return { ...prev, data: [...tempArr] }
+    const updateSearchedValues = (id: string) => setDataState(prev => {
+        const tempNoteArr = prev.data.filter((val: any) => val.id !== id)
+        return { ...prev, data: [...tempNoteArr] }
     })
 
     const fetchData = async () => {
@@ -41,7 +37,7 @@ const SearchComponent: React.FC<{
 
         try {
             let { data: notes, error } = await supabaseClient
-                .from('notes')
+                .from('temporaryNotes')
                 .select('*')
                 .eq("user", user?.hankoId)
                 .ilike('note', `%${values.searchText}%`)
@@ -83,7 +79,7 @@ const SearchComponent: React.FC<{
             autoComplete="off"
             name="searchText"
             size="large"
-            placeholder="Search notes"
+            placeholder="Search Deleted Notes"
             prefix={<CgSearch className="mr-3 text-2xl text-white" />} />
 
         {showBox
@@ -103,7 +99,7 @@ const SearchComponent: React.FC<{
                         allowClear
                         name="searchText"
                         size="large"
-                        placeholder="Search notes"
+                        placeholder="Search Deleted Notes"
                         prefix={<CgSearch className="mr-3 text-2xl text-white" />} />
                     <div className="p-5">
                         {dataState.isLoading
@@ -115,22 +111,13 @@ const SearchComponent: React.FC<{
                                 : <div className="space-y-10 transform">
                                     {dataState.data.map((note: note, idx: number) =>
                                         <NoteRow
-                                            afterDelete={() => {
-                                                afterDelete();
-                                                fetchData()
+                                            afterNoteRestored={() => {
+                                                updateSearchedValues(note.id)
+                                                afterNoteRestored(note.id)
                                             }}
                                             key={idx}
                                             note={note}
-                                            afterFavoriteUpdate={() => {
-                                                if (afterFavoriteUpdate) {
-                                                    afterFavoriteUpdate()
-                                                }
-                                                fetchData()
-                                            }}
-                                            afterUpdate={(val) => {
-                                                afterUpdate(val);
-                                                updateSearchedValues(val)
-                                            }}
+                                            fromDeletePage={true}
                                         />
                                     )}
                                 </div>}
