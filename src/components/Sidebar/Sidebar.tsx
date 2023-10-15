@@ -18,7 +18,7 @@ export default function Sidebar() {
     return <Styles className={`${!sidebarOpen && "close-sidebar"} bg-shatteredIsland ml-0`}>
         <div className="bg-black100 bg-opacity-[0.5] h-full p-6">
             <div className="flex flex-row items-center justify-end">
-                <Avatar size={40} src={user?.photoURL} className="mr-auto" />
+                <Avatar size={40} className="mr-auto" style={{ background: "#015291" }} >{user?.email.charAt(0).toUpperCase()}</Avatar>
                 <Link to={"/home"}><BiHome className="text-textGrey100 cursor-pointer text-2xl" /></Link>
                 {/* <FaEllipsisV className="text-textGrey100 cursor-pointer text-xl" /> */}
             </div>
