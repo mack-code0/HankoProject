@@ -12,6 +12,7 @@ import toast from "react-hot-toast";
 import ToastText from "../../../components/ToastText";
 import NoNote from "../../../components/NoNote";
 import { note } from "../../../utils/types";
+import { AiFillCloseCircle } from "react-icons/ai";
 
 const SearchComponent: React.FC<{
     afterNoteRestored: (id: string) => void
@@ -90,8 +91,11 @@ const SearchComponent: React.FC<{
                     }
                 }}
                 id="wrapper"
-                className="flex justify-center backdrop-blur-sm p-4 z-[100] rounded-lg bg-[#393939]/[0.7] w-[100vw] h-[100vh] fixed left-0 top-[0] cursor-pointer">
-                <div className="bg-[#1D1D1D] border border-textGrey100/[0.3] rounded-lg md:w-1/2 cursor-auto">
+                className="flex justify-center backdrop-blur-sm p-0 md:p-4 z-[100] rounded-lg bg-[#393939]/[0.7] w-[100vw] h-[100vh] fixed left-0 top-[0] cursor-pointer">
+                <div className="relative bg-[#1D1D1D] border border-textGrey100/[0.3] rounded-lg w-full md:w-1/2 cursor-auto">
+                    <AiFillCloseCircle
+                        onClick={() => setShowBox(!showBox)}
+                        className="z-[100] absolute -top-4 -right-4 text-textGrey100 text-5xl !cursor-pointer" />
                     <InnerInput
                         onChange={handleChange}
                         value={values.searchText}
