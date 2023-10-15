@@ -6,14 +6,28 @@ import { Avatar } from "antd"
 import { useUserStore } from "../../utils/Store"
 import { handleLogout } from "../../utils/HandleLogout"
 import SIZES from "../../assets/SIZES"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { DoubleRightOutlined, DoubleLeftOutlined } from "@ant-design/icons"
-
 
 export default function Sidebar() {
     const activeTab = window.location.pathname
     const user = useUserStore((state) => state.user)
     const [sidebarOpen, setSidebarOpen] = useState(false)
+
+    const [screenWidth, setScreenWidth] = useState(window.innerWidth)
+
+    useEffect(() => {
+        window.addEventListener("resize", () => setScreenWidth(window.innerWidth))
+
+        return () => window.removeEventListener("resize", () => setScreenWidth(window.innerWidth))
+    }, [])
+
+    const handleTabClick = () => {
+        if (screenWidth <= 992) {
+            setSidebarOpen(!sidebarOpen)
+        }
+    }
+
 
     return <Styles className={`${!sidebarOpen && "close-sidebar"} bg-shatteredIsland ml-0`}>
         <div className="bg-black100 bg-opacity-[0.5] h-full p-6">
@@ -25,26 +39,30 @@ export default function Sidebar() {
 
             <h4 className="font-figtree font-bold text-center text-textGrey100 text-base mt-10">Quick Links</h4>
             <div className="mt-7 space-y-7 text-white flex flex-col items-center justify-center">
-                <Button
+                <Link
                     to={"/home"}
+                    onClick={handleTabClick}
                     className={`${activeTab === "/home" ? "bg-blue100" : "hover:bg-white hover:bg-opacity-5"} hover:text-white transition-all rounded-full py-3 px-6 w-[10rem] flex flex-row items-center font-inter text-sm font-bold`}>
                     <CgNotes className="mr-4 text-xl" />Home
-                </Button>
-                <Button
+                </Link>
+                <Link
                     to={"/favourites"}
+                    onClick={handleTabClick}
                     className={`${activeTab === "/favourites" ? "bg-blue100" : "hover:bg-white hover:bg-opacity-5"} hover:text-white transition-all rounded-full py-3 px-6 w-[10rem] flex flex-row items-center font-inter text-sm font-bold`}>
                     <CgHeart className="mr-4 text-xl" />Favourites
-                </Button>
-                <Button
+                </Link>
+                <Link
                     to={"/deleted"}
+                    onClick={handleTabClick}
                     className={`${activeTab === "/deleted" ? "bg-blue100" : "hover:bg-white hover:bg-opacity-5"} hover:text-white transition-all rounded-full py-3 px-6 w-[10rem] flex flex-row items-center font-inter text-sm font-bold`}>
                     <CgTrash className="mr-4 text-xl" />Deleted
-                </Button>
-                <Button
+                </Link>
+                <Link
                     to={"/profile"}
+                    onClick={handleTabClick}
                     className={`${activeTab === "/profile" ? "bg-blue100" : "hover:bg-white hover:bg-opacity-5"} hover:text-white transition-all rounded-full py-3 px-6 w-[10rem] flex flex-row items-center font-inter text-sm font-bold`}>
                     <CgUserAdd className="mr-4 text-xl" />Profile
-                </Button>
+                </Link>
                 <button
                     onClick={() => handleLogout()}
                     className={`${activeTab === "" ? "bg-blue100" : "hover:bg-white hover:bg-opacity-5"} hover:text-white transition-all rounded-full py-3 px-6 w-[10rem] flex flex-row items-center font-inter text-sm font-bold`}>
@@ -62,8 +80,6 @@ export default function Sidebar() {
     </Styles>
 }
 
-const Button = styled(Link)`
-`
 
 const Styles = styled.div`
     width: ${SIZES.sidebarWidth}px;
@@ -93,7 +109,7 @@ const Styles = styled.div`
         transition: all 0.2s;
     }
 
-    @media only screen and (max-width: 992px) {
+    @media only screen and (max-width: ${SIZES.screenWidthSm}px) {
         box-shadow: 42px -84px 83px 20px rgba(0, 0, 0, 0.226);
         .control{
             display: flex;
