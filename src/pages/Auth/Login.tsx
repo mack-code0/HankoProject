@@ -1,4 +1,4 @@
-import { useMemo, useEffect } from "react";
+import { useMemo, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { register, Hanko } from "@teamhanko/hanko-elements";
 import { HANKO_API_URL } from "../../utils/keys";
@@ -6,6 +6,7 @@ import supabaseClient from "../../utils/supabaseClient";
 import { User } from "../../utils/types";
 import toast from "react-hot-toast";
 import ToastText from "../../components/ToastText";
+import logo from "../../../favicon.ico"
 
 
 function Login() {
@@ -34,6 +35,8 @@ function Login() {
                 if (userResponse.error) {
                     throw error
                 }
+
+                toast.success(<ToastText>Your account has been created! 🚀</ToastText>)
             }
         } catch (error: any) {
             toast.error(<ToastText>An error occured</ToastText>);
@@ -52,14 +55,20 @@ function Login() {
         })
     }, [])
 
+    const [showLogo, setShowLogo] = useState(false)
     useEffect(() => {
-        register(HANKO_API_URL).catch(() => {
+        register(HANKO_API_URL).then(() => setShowLogo(true)).catch(() => {
             toast.error(<ToastText>An Error occured</ToastText>)
         })
     }, [])
 
-    return (<div className="flex h-screen items-center justify-center">
-        <hanko-auth />
+    return (<div className="flex flex-col h-screen items-center justify-center">
+        <div className="w-full lg:w-[400px]">
+            {showLogo && <img src={logo} alt="Logo" />}
+            <div className="p-2">
+                <hanko-auth />
+            </div>
+        </div>
     </div>);
 }
 

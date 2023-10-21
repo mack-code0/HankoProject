@@ -33,8 +33,8 @@ const GlobalStyles = createGlobalStyle`
     --item-margin: 0.5rem 0;
 
     /* Container Styles */
-    --container-padding: 30px;
-    --container-max-width: 410px;
+    --container-padding: 0;
+    --container-max-width: 100%;
 
     /* Headline Styles */
     --headline1-font-size: 24px;

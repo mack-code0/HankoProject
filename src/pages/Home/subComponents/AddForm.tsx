@@ -97,7 +97,7 @@ const AddForm: React.FC<{ toggleModal: () => void, getNotes: () => void }> = ({ 
                 <button
                     type="submit"
                     disabled={formik.isSubmitting}
-                    className=" px-5 py-2 font-figtree font-bold bg-white rounded-lg text-black200 flex flex-row items-center">
+                    className="px-5 py-2 font-figtree font-bold bg-white rounded-lg text-black200 flex flex-row items-center">
                     Add
                     {formik.isSubmitting && <Spinner />}
                 </button>

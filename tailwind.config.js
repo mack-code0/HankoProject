@@ -6,6 +6,7 @@ export default {
       colors: {
         black100: "#111111",
         black200: "#1D1D1D",
+        black29: "#292929",
         textGrey100: "#A5A5A5",
         green100: "#35ca4a",
         blue100: "#0078d3"
