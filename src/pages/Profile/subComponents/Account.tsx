@@ -28,7 +28,7 @@ const Account = () => {
                 </Avatar>
             </div>
 
-            <div className="mt-5">
+            <div className="mt-5 md:w-[300px] w-full">
                 <Formik
                     validationSchema={Yup.object({
                         name: Yup.string().required("Name cannot be blank")
@@ -56,7 +56,7 @@ const Account = () => {
                 >
                     {({ errors, handleChange, handleBlur, isSubmitting, values }) =>
                         <Form>
-                            <div className="w-full md:w-[300px]">
+                            <div className="w-full">
                                 <Input
                                     autoComplete="false"
                                     error={errors.name ? true : false}

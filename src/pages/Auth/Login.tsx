@@ -65,7 +65,7 @@ function Login() {
     return (<div className="flex flex-col h-screen items-center justify-center">
         <div className="w-full lg:w-[400px]">
             {showLogo && <img src={logo} alt="Logo" />}
-            <div className="p-2">
+            <div className="p-5 md:p-2">
                 <hanko-auth />
             </div>
         </div>

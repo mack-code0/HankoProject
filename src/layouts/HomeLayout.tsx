@@ -2,8 +2,13 @@ import styled from "styled-components"
 import SIZES from "../assets/SIZES"
 import Sidebar from "../components/Sidebar/Sidebar"
 import AuthGuard from "../routes/AuthGuard"
+import { useEffect } from "react"
 
 export default function HomeLayout({ children }: any) {
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" })
+    }, [])
+    
     return <AuthGuard>
         <Styles className="d-flex overflow-x-hidden">
             <Sidebar />

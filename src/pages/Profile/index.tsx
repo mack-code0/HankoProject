@@ -7,7 +7,7 @@ import Security from "./subComponents/Security";
 
 const Profile = () => {
     const [activeTab, setActiveTab] = useState("1")
-    return (<div className="p-5">
+    return (<div className="px-5 md:py-5 py-10">
         <ConfigProvider
             theme={{
                 token: {
