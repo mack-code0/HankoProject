@@ -29,7 +29,7 @@ Introducing our app, where seamless functionality meets user-friendly design! En
 - Frontend: **React Typescript**
 - Database: **Supabase**
 - Authentication: **Hanko**
-- Other Libraries/Tools: **Vite, Style-Components, Tailwind, Zustand**
+- Other Libraries/Tools: **Vite, Styled-Components, Tailwind, Zustand**
 
 ## Installation
 Step-by-step instructions on how to install and run the application locally:
