@@ -9,6 +9,7 @@ Introducing our app, where seamless functionality meets user-friendly design! En
 - [Features](#features)
 - [Technologies Used](#technologies-used)
 - [Installation](#installation)
+- [Setup](#setup-after-installation)
 - [Screenshots](#screenshots)
 - [Contributing](#contributing)
 - [License](#license)
@@ -46,6 +47,15 @@ npm install
 
 # Start the application
 npm run dev
+```
+## Setup After Installation
+After Installation, Create ```.env``` file in the root directory. Signup on **Hanko** to get your ```hanko api url``` and also signup on on **Supabase** to get your ```supabase url``` and ```supabase anonymous key```.
+```bash
+VITE_HANKO_API_URL=Your_hanko_API_URL
+
+VITE_SUPABASE_URL=Your_Supabase_URL
+
+VITE_SUPABASE_ANON_KEY=Your_Supabase_Anonymous_Key
 ```
 
 ## Screenshots
